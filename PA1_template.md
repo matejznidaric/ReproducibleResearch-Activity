@@ -17,13 +17,13 @@ data <- read.csv("activity.csv", na.strings = "NA", header = T)
 
 # What is mean total number of steps taken per day? 
 
-1. Calculate the total number of steps taken per day
+* Calculate the total number of steps taken per day
 
 ```r
 aggByDate <- aggregate(data$steps, by=list(data$date), FUN = sum, na.rm=TRUE)
 ```
 
-2. Make a histogram of the total number of steps taken each day:
+* Make a histogram of the total number of steps taken each day:
 
 ```r
 hist(aggByDate$x, breaks = 40, las=1, 
@@ -32,7 +32,7 @@ hist(aggByDate$x, breaks = 40, las=1,
 
 ![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
-3. 
+* 
 
 ```r
 meanbyDate <- mean(aggByDate$x)
@@ -47,7 +47,7 @@ b) The median number of steps taken per day is 10395.00.
 
 # What is the average daily activity pattern?
 
-1. Make a time series plot (i.e. 𝚝𝚢𝚙𝚎 = "𝚕") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+* Make a time series plot (i.e. 𝚝𝚢𝚙𝚎 = "𝚕") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
 ```r
 avgStepsInterval <- aggregate(data$steps, by = list(data$interval), FUN = "mean", na.rm = TRUE)
@@ -57,7 +57,7 @@ plot(avgStepsInterval, type = "l", xlab = "5' interval", ylab = "average number 
 
 ![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
-2. On average across all the days in the dataset, 5' interval number 835 contains the maximum number of steps.
+* On average across all the days in the dataset, 5' interval number 835 contains the maximum number of steps.
 
 
 # Imputing missing values
@@ -66,9 +66,9 @@ plot(avgStepsInterval, type = "l", xlab = "5' interval", ylab = "average number 
 ```r
 sumNa <- sum(is.na(data$steps))
 ```
-1. Total number of missing values in the dataset is: 2304.
+* Total number of missing values in the dataset is: 2304.
 
-2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+* Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
 Strategy for filling in all of the missing values is mean of the 5' interval. New Data set is named "dataFull"
 
@@ -79,7 +79,7 @@ dataFull <- merge(data,avgStepsInterval,by="interval")
 dataFull[is.na(dataFull$steps),2] <- dataFull[is.na(dataFull$steps),4]
 ```
 
-3. a) Make a histogram of the total number of steps taken each day and 
+* a) Make a histogram of the total number of steps taken each day and 
 
 ```r
 aggByDateFull <- aggregate(dataFull$steps, by=list(dataFull$date), FUN = sum, na.rm=TRUE)
@@ -108,7 +108,7 @@ yes, the numbers differ 13.11% for a for mean and 3.45% for a median.
 
 # Are there differences in activity patterns between weekdays and weekends?
 
-1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
+* Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
 
 ```r
 dataFull$date <- as.Date(dataFull$date, format="%Y-%m-%d")
@@ -118,7 +118,7 @@ names(daysInWeek) <- c("dayname", "weekdayClass")
 dataFull <- merge(dataFull,daysInWeek,by="dayname")
 ```
 
-2. Make a panel plot containing a time series plot (i.e. 𝚝𝚢𝚙𝚎 = "𝚕") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+* Make a panel plot containing a time series plot (i.e. 𝚝𝚢𝚙𝚎 = "𝚕") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
 
 ```r
 library(ggplot2)
@@ -129,8 +129,23 @@ ggplot(data=avgStepsPerIntervalFull,aes(x=interval, y=avgSteps, group=1)) + geom
 
 ![](PA1_template_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
 
+* Compute the min, max, mean, median of the steps across all intervals and days by weekdays/weekends
 
+```r
+tapply(dataFull$steps,dataFull$weekdayClass,
+       function (x) { c(MINIMUM=min(x),MEAN=mean(x),
+                        MEDIAN=median(x),MAXIMUM=max(x))})
+```
 
+```
+## $Weekday
+##   MINIMUM      MEAN    MEDIAN   MAXIMUM 
+##   0.00000  35.61058   0.00000 806.00000 
+## 
+## $Weekend
+##  MINIMUM     MEAN   MEDIAN  MAXIMUM 
+##   0.0000  42.3664   0.0000 785.0000
+```
 
 
 
